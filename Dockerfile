@@ -1,7 +1,7 @@
 # Use Eclipse Temurin Java 21
 FROM eclipse-temurin:21-jdk-alpine
 
-# Install Python and Node.js for code execution feature
+# Install Python and Node.js for code execution
 RUN apk add --no-cache \
     python3 \
     py3-pip \
@@ -9,29 +9,24 @@ RUN apk add --no-cache \
     npm \
     curl
 
-# Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy everything
+COPY . .
 
 # Make mvnw executable
 RUN chmod +x mvnw
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline -B
+# Build the application
+RUN ./mvnw clean package -DskipTests
 
-# Copy source code
-COPY src src
+# List contents to verify JAR
+RUN ls -la target/
 
-# Build the application with debug info
-RUN ./mvnw clean package -DskipTests -X && \
-    mv target/*.jar app.jar
+# Rename JAR for easy execution
+RUN cp target/*.jar app.jar
 
-# Expose port
 EXPOSE 8080
 
-# Run the application with debug logging
-ENTRYPOINT ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "-Ddebug", "app.jar"]
+# Run with debug to see all endpoints
+CMD ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "-Ddebug=true", "app.jar"]
