@@ -3,13 +3,16 @@ package com.codecollab.config;
 import com.mongodb.client.MongoClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
 public class MongoConfig {
 
     @Bean
+    @Primary
     public MongoTemplate mongoTemplate() {
         String mongoUri = System.getenv("MONGODB_URI");
         
@@ -20,12 +23,9 @@ public class MongoConfig {
             System.out.println("✅ Found: " + masked);
         } else {
             System.err.println("❌ MONGODB_URI environment variable is null!");
-        }
-        System.out.println("========================================");
-        
-        if (mongoUri == null || mongoUri.isEmpty()) {
             throw new RuntimeException("MONGODB_URI environment variable is not set!");
         }
+        System.out.println("========================================");
         
         return new MongoTemplate(new SimpleMongoClientDatabaseFactory(mongoUri));
     }
