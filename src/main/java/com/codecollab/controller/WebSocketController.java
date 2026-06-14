@@ -95,7 +95,7 @@ public class WebSocketController {
             joinMsg.setParticipantEmail(message.getParticipantEmail());
             joinMsg.setParticipantName(username);
             joinMsg.setParticipantCount(participants.size());
-            joinMsg.setParticipants(participants);  // Send the actual list!
+            joinMsg.setParticipants(participants);
             
             System.out.println("📢 Broadcasting join to room: " + message.getRoomId() + " with " + participants.size() + " participants");
             

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/rooms")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
 public class RoomController {
     
     @Autowired
@@ -70,6 +70,7 @@ public class RoomController {
     @DeleteMapping("/{roomId}")
     public String deleteRoom(@PathVariable String roomId,
                               @RequestHeader("X-User-Email") String email) {
+        System.out.println("DELETE request received for room: " + roomId + " by user: " + email);
         roomService.deleteRoom(roomId, email);
         return "Room deleted successfully";
     }

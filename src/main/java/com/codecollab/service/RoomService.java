@@ -5,6 +5,7 @@ import com.codecollab.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,7 +39,7 @@ public class RoomService {
         
         // Initialize participants list
         if (room.getParticipants() == null) {
-            room.setParticipants(new java.util.ArrayList<>());
+            room.setParticipants(new ArrayList<>());
         }
         if (!room.getParticipants().contains(ownerEmail)) {
             room.getParticipants().add(ownerEmail);
@@ -61,13 +62,15 @@ public class RoomService {
         
         // Initialize participants list if null
         if (room.getParticipants() == null) {
-            room.setParticipants(new java.util.ArrayList<>());
+            room.setParticipants(new ArrayList<>());
         }
         
-        // Add participant if not already present
+        // Add participant if not already present (allow rejoining)
         if (!room.getParticipants().contains(email)) {
             room.getParticipants().add(email);
             System.out.println("✅ Added " + email + " to room " + roomId + ". Total participants: " + room.getParticipants().size());
+        } else {
+            System.out.println("ℹ️ " + email + " is already in room " + roomId);
         }
         
         return roomRepository.save(room);
@@ -97,7 +100,28 @@ public class RoomService {
     }
     
     public List<Room> getUserRooms(String email) {
-        return roomRepository.findByParticipantsContaining(email);
+        // Get rooms where user is a participant
+        List<Room> participantRooms = roomRepository.findByParticipantsContaining(email);
+        
+        // Get rooms where user is the owner
+        List<Room> ownedRooms = roomRepository.findByOwnerEmail(email);
+        
+        // Combine both lists without duplicates and filter out inactive rooms
+        List<Room> allRooms = new ArrayList<>();
+        
+        for (Room room : participantRooms) {
+            if (room.isActive() && !allRooms.contains(room)) {
+                allRooms.add(room);
+            }
+        }
+        
+        for (Room ownedRoom : ownedRooms) {
+            if (ownedRoom.isActive() && !allRooms.contains(ownedRoom)) {
+                allRooms.add(ownedRoom);
+            }
+        }
+        
+        return allRooms;
     }
     
     public List<Room> getOwnedRooms(String email) {
@@ -105,11 +129,16 @@ public class RoomService {
     }
     
     public void deleteRoom(String roomId, String ownerEmail) {
+        System.out.println("Attempting to delete room: " + roomId + " by: " + ownerEmail);
         Room room = getRoom(roomId);
+        System.out.println("Found room: " + room.getRoomName() + ", Owner: " + room.getOwnerEmail());
+        
         if (!room.getOwnerEmail().equals(ownerEmail)) {
+            System.err.println("Unauthorized delete attempt by: " + ownerEmail);
             throw new RuntimeException("Only room owner can delete the room");
         }
-        room.setActive(false);
-        roomRepository.save(room);
+        
+        roomRepository.delete(room);
+        System.out.println("🗑️ Room " + roomId + " permanently deleted by " + ownerEmail);
     }
 }

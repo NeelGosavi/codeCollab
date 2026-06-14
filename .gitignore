@@ -52,3 +52,10 @@ logs/
 Thumbs.db
 *.swp
 *.tmp
+
+# Frontend
+codecollab-frontend/node_modules/
+codecollab-frontend/dist/
+codecollab-frontend/.vite/
+codecollab-frontend/.env
+codecollab-frontend/.env.local

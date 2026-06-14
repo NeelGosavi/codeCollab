@@ -11,16 +11,15 @@ public class Room {
     @Id
     private String id;
     
-    private String roomId;           // Unique join code (e.g., "ABC123")
-    private String roomName;         // Display name
-    private String ownerEmail;       // Who created the room
-    private List<String> participants; // List of participant emails
-    private String codeContent;      // Current code in the editor
-    private String language;         // "java", "python", "javascript"
+    private String roomId;
+    private String roomName;
+    private String ownerEmail;
+    private List<String> participants;
+    private String codeContent;
+    private String language;
     private String createdAt;
     private boolean isActive;
     
-    // Default constructor
     public Room() {
         this.participants = new ArrayList<>();
         this.createdAt = Instant.now().toString();
@@ -29,12 +28,14 @@ public class Room {
         this.codeContent = "// Write your code here\npublic class Main {\n    public static void main(String[] args) {\n        \n    }\n}";
     }
     
-    // Constructor with required fields
     public Room(String roomId, String roomName, String ownerEmail) {
         this();
         this.roomId = roomId;
         this.roomName = roomName;
         this.ownerEmail = ownerEmail;
+        if (this.participants == null) {
+            this.participants = new ArrayList<>();
+        }
         this.participants.add(ownerEmail);
     }
     
@@ -62,16 +63,21 @@ public class Room {
     
     // Helper methods
     public void addParticipant(String email) {
+        if (participants == null) {
+            participants = new ArrayList<>();
+        }
         if (!participants.contains(email)) {
             participants.add(email);
         }
     }
     
     public void removeParticipant(String email) {
-        participants.remove(email);
+        if (participants != null) {
+            participants.remove(email);
+        }
     }
     
     public int getParticipantCount() {
-        return participants.size();
+        return participants == null ? 0 : participants.size();
     }
 }
