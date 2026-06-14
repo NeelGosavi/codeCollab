@@ -9,9 +9,6 @@ RUN apk add --no-cache \
     npm \
     curl
 
-# Create symbolic links
-RUN ln -s /usr/bin/python3 /usr/bin/python
-
 # Set working directory
 WORKDIR /app
 
