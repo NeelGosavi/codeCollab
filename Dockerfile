@@ -11,22 +11,37 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-# Copy everything
-COPY . .
+# Copy Maven files first (for better caching)
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
 # Make mvnw executable
 RUN chmod +x mvnw
 
+# Download dependencies
+RUN ./mvnw dependency:go-offline -B
+
+# Copy source code
+COPY src src
+
 # Build the application
 RUN ./mvnw clean package -DskipTests
 
-# List contents to verify JAR
-RUN ls -la target/
+# Debug: List target directory
+RUN echo "=== Target directory contents ===" && \
+    ls -la target/ && \
+    echo "=== Finding JAR file ===" && \
+    find target -name "*.jar"
 
-# Rename JAR for easy execution
-RUN cp target/*.jar app.jar
+# Copy the JAR file (handle different possible names)
+RUN if [ -f target/*.jar ]; then \
+        cp target/*.jar app.jar; \
+    else \
+        echo "ERROR: No JAR file found!" && exit 1; \
+    fi
 
 EXPOSE 8080
 
-# Run with debug to see all endpoints
-CMD ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "-Ddebug=true", "app.jar"]
+# Run the application
+CMD ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "app.jar"]

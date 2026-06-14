@@ -11,8 +11,8 @@ import java.util.Map;
 public class SimpleController {
 
     @GetMapping("/test")
-    public Map<String, String> test() {
-        Map<String, String> response = new HashMap<>();
+    public Map<String, Object> test() {
+        Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("message", "Server is running!");
         response.put("timestamp", java.time.Instant.now().toString());
@@ -25,5 +25,10 @@ public class SimpleController {
         response.put("status", "UP");
         response.put("service", "CodeCollab Backend");
         return response;
+    }
+    
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
     }
 }
