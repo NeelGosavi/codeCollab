@@ -1,14 +1,13 @@
-# Use Java 21 as base image
-FROM openjdk:21-jdk-slim
+# Use Eclipse Temurin Java 21 (official OpenJDK distribution)
+FROM eclipse-temurin:21-jdk-alpine
 
 # Install Python and Node.js for code execution feature
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
     python3 \
-    python3-pip \
+    py3-pip \
     nodejs \
     npm \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+    curl
 
 # Create symbolic links
 RUN ln -s /usr/bin/python3 /usr/bin/python
