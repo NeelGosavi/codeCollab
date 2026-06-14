@@ -12,7 +12,7 @@ RUN apk add --no-cache \
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first (for better caching)
+# Copy Maven wrapper and pom.xml first
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
@@ -20,18 +20,18 @@ COPY pom.xml .
 # Make mvnw executable
 RUN chmod +x mvnw
 
-# Download dependencies (this layer is cached unless pom.xml changes)
+# Download dependencies
 RUN ./mvnw dependency:go-offline -B
 
 # Copy source code
 COPY src src
 
-# Build the application and rename JAR to app.jar
-RUN ./mvnw clean package -DskipTests && \
+# Build the application with debug info
+RUN ./mvnw clean package -DskipTests -X && \
     mv target/*.jar app.jar
 
 # Expose port
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "app.jar"]
+# Run the application with debug logging
+ENTRYPOINT ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "-Ddebug", "app.jar"]
