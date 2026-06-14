@@ -26,11 +26,12 @@ RUN ./mvnw dependency:go-offline -B
 # Copy source code
 COPY src src
 
-# Build the application
-RUN ./mvnw clean package -DskipTests
+# Build the application and rename JAR to app.jar
+RUN ./mvnw clean package -DskipTests && \
+    mv target/*.jar app.jar
 
 # Expose port
 EXPOSE 8080
 
-# Run the application - use the actual JAR name with wildcard
-ENTRYPOINT ["sh", "-c", "java -jar -Dserver.port=8080 target/*.jar"]
+# Run the application
+ENTRYPOINT ["java", "-jar", "-Dserver.port=8080", "-Dserver.address=0.0.0.0", "app.jar"]
