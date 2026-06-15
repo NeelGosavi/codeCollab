@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify({ email }));
             setToken(token);
             setUser({ email });
+            console.log('Login successful, token saved');
             return { success: true, message };
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Login failed' };
@@ -42,6 +43,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify({ email, username }));
             setToken(token);
             setUser({ email, username });
+            console.log('Signup successful, token saved');
             return { success: true, message };
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Signup failed' };
@@ -49,11 +51,13 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
+        console.log('Logging out...');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setToken(null);
         setUser(null);
-        navigate('/');  // Redirect to landing page
+        navigate('/');
+        console.log('Redirected to landing page');
     };
 
     return (
