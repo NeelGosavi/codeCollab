@@ -7,6 +7,7 @@ if (typeof window !== 'undefined' && !window.global) {
 }
 
 // Use environment variable for WebSocket URL
+// SockJS requires http/https protocol, not ws/wss
 const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws';
 
 console.log('🔌 WebSocket URL:', WS_URL);
@@ -27,7 +28,7 @@ class WebSocketService {
         console.log('🔌 Connecting to WebSocket at:', WS_URL);
         
         try {
-            // Create SockJS connection
+            // Create SockJS connection - this works with http/https URLs
             const socket = new SockJS(WS_URL);
             
             this.client = new Client({
