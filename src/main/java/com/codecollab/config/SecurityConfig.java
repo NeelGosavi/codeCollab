@@ -38,6 +38,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
             frontendUrl,
+            "https://code-collab-five-teal.vercel.app",
+            "https://code-collab.vercel.app",
             "http://localhost:5173",
             "http://127.0.0.1:5173",
             "http://localhost:3000",
