@@ -7,9 +7,7 @@ const LandingPage = () => {
     const navigate = useNavigate();
     const [scrolled, setScrolled] = useState(false);
     const [activeFeature, setActiveFeature] = useState(null);
-    const [counterValues, setCounterValues] = useState([0, 0, 0, 0]);
     const featuresRef = useRef([]);
-    const statsRef = useRef(null);
 
     useEffect(() => {
         if (user) {
@@ -20,20 +18,6 @@ const LandingPage = () => {
             setScrolled(window.scrollY > 50);
         };
         window.addEventListener('scroll', handleScroll);
-        
-        // Animate counters when stats come into view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    startCounterAnimation();
-                    observer.disconnect();
-                }
-            });
-        });
-        
-        if (statsRef.current) {
-            observer.observe(statsRef.current);
-        }
         
         return () => {
             window.removeEventListener('scroll', handleScroll);
@@ -50,30 +34,6 @@ const LandingPage = () => {
                 block: 'start'
             });
         }
-    };
-
-    const startCounterAnimation = () => {
-        const targets = [100, 3, 1000, 99];
-        const duration = 2000;
-        const stepTime = 20;
-        const steps = duration / stepTime;
-        
-        targets.forEach((target, index) => {
-            let current = 0;
-            const increment = target / steps;
-            const interval = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(interval);
-                }
-                setCounterValues(prev => {
-                    const newValues = [...prev];
-                    newValues[index] = Math.floor(current);
-                    return newValues;
-                });
-            }, stepTime);
-        });
     };
 
     const features = [
@@ -118,6 +78,45 @@ const LandingPage = () => {
             description: "Support for Java, Python, and JavaScript. More languages coming soon.",
             color: "indigo",
             gradient: "from-indigo-500 to-purple-500"
+        }
+    ];
+
+    const techStack = [
+        {
+            name: "Spring Boot",
+            icon: "☕",
+            description: "REST APIs & WebSocket",
+            color: "from-green-500 to-emerald-500"
+        },
+        {
+            name: "React",
+            icon: "⚛️",
+            description: "Modern UI Components",
+            color: "from-cyan-500 to-blue-500"
+        },
+        {
+            name: "MongoDB",
+            icon: "🍃",
+            description: "Database & Storage",
+            color: "from-green-600 to-teal-500"
+        },
+        {
+            name: "WebSocket",
+            icon: "🔌",
+            description: "Real-time Communication",
+            color: "from-purple-500 to-pink-500"
+        },
+        {
+            name: "Tailwind CSS",
+            icon: "🎨",
+            description: "Styling & Animations",
+            color: "from-blue-400 to-cyan-400"
+        },
+        {
+            name: "JWT",
+            icon: "🔐",
+            description: "Secure Authentication",
+            color: "from-red-500 to-orange-500"
         }
     ];
 
@@ -202,40 +201,38 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Stats Section */}
-            <section ref={statsRef} className="py-20">
+            {/* Built With Section - Tech Stack */}
+            <section className="py-12 md:py-20">
                 <div className="container mx-auto px-4 md:px-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                        <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm hover:bg-gray-800/50 transition-all hover:scale-105 cursor-pointer">
-                            <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                                {counterValues[0]}+
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fadeInUp">
+                            Built With Modern Tech
+                        </h2>
+                        <p className="text-gray-400 max-w-2xl mx-auto animate-fadeInUp animation-delay-200">
+                            Powered by industry-leading technologies for the best experience
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+                        {techStack.map((tech, index) => (
+                            <div
+                                key={index}
+                                className="bg-gray-800/30 rounded-xl p-4 md:p-6 text-center border border-gray-700 hover:border-transparent transition-all duration-300 group animate-fadeInUp"
+                                style={{ animationDelay: `${index * 100}ms` }}
+                            >
+                                <div className={`w-12 h-12 md:w-14 md:h-14 bg-gradient-to-r ${tech.color} rounded-lg flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
+                                    <span className="text-2xl md:text-3xl">{tech.icon}</span>
+                                </div>
+                                <h3 className="text-sm md:text-base font-semibold text-white mb-1">{tech.name}</h3>
+                                <p className="text-gray-500 text-xs">{tech.description}</p>
                             </div>
-                            <div className="text-gray-500 text-sm mt-1">Lines of Code</div>
-                        </div>
-                        <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm hover:bg-gray-800/50 transition-all hover:scale-105 cursor-pointer">
-                            <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                                {counterValues[1]}+
-                            </div>
-                            <div className="text-gray-500 text-sm mt-1">Languages</div>
-                        </div>
-                        <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm hover:bg-gray-800/50 transition-all hover:scale-105 cursor-pointer">
-                            <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
-                                {counterValues[2]}+
-                            </div>
-                            <div className="text-gray-500 text-sm mt-1">Active Users</div>
-                        </div>
-                        <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm hover:bg-gray-800/50 transition-all hover:scale-105 cursor-pointer">
-                            <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                                {counterValues[3]}%
-                            </div>
-                            <div className="text-gray-500 text-sm mt-1">Satisfaction</div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
             {/* Features Section */}
-            <section id="features" className="py-12 md:py-20">
+            <section id="features" className="py-12 md:py-20 bg-gray-800/20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fadeInUp">
@@ -251,7 +248,7 @@ const LandingPage = () => {
                             <div
                                 key={index}
                                 ref={el => featuresRef.current[index] = el}
-                                className="bg-gray-800/30 rounded-xl p-6 border border-gray-700 hover:border-transparent transition-all duration-500 cursor-pointer group animate-fadeInUp"
+                                className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-transparent transition-all duration-500 cursor-pointer group animate-fadeInUp"
                                 style={{ animationDelay: `${index * 100}ms` }}
                                 onMouseEnter={() => setActiveFeature(index)}
                                 onMouseLeave={() => setActiveFeature(null)}
@@ -273,7 +270,7 @@ const LandingPage = () => {
             </section>
 
             {/* How It Works Section */}
-            <section className="py-12 md:py-20 bg-gray-800/20">
+            <section className="py-12 md:py-20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fadeInUp">
@@ -320,7 +317,7 @@ const LandingPage = () => {
                             Ready to Collaborate?
                         </h2>
                         <p className="text-blue-100 mb-6 max-w-xl mx-auto">
-                            Join thousands of developers coding together on CodeCollab
+                            Join developers coding together on CodeCollab
                         </p>
                         <Link
                             to="/signup"
