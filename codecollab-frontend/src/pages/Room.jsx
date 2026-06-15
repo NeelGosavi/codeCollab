@@ -23,6 +23,7 @@ const Room = () => {
     const [output, setOutput] = useState('');
     const [isExecuting, setIsExecuting] = useState(false);
     const [showOutput, setShowOutput] = useState(false);
+    const [showMobileParticipants, setShowMobileParticipants] = useState(false);
 
     useEffect(() => {
         if (!user) {
@@ -145,33 +146,33 @@ const Room = () => {
     };
 
     const handleRunCode = async () => {
-    setIsExecuting(true);
-    setOutput('⏳ Executing code...');
-    setShowOutput(true);
-    
-    try {
-        const response = await executeCode({
-            code: code,
-            language: language,
-            roomId: roomId,
-            userEmail: user.email
-        });
+        setIsExecuting(true);
+        setOutput('⏳ Executing code...');
+        setShowOutput(true);
         
-        if (response.data.success) {
-            if (response.data.output) {
-                setOutput(response.data.output);
+        try {
+            const response = await executeCode({
+                code: code,
+                language: language,
+                roomId: roomId,
+                userEmail: user.email
+            });
+            
+            if (response.data.success) {
+                if (response.data.output) {
+                    setOutput(response.data.output);
+                } else {
+                    setOutput('✅ Code executed successfully (no output)');
+                }
             } else {
-                setOutput('✅ Code executed successfully (no output)');
+                setOutput(`❌ Error:\n${response.data.error}`);
             }
-        } else {
-            setOutput(`❌ Error:\n${response.data.error}`);
+        } catch (error) {
+            console.error('Execution failed:', error);
+            setOutput(`❌ Failed to execute code: ${error.response?.data?.message || error.message}`);
+        } finally {
+            setIsExecuting(false);
         }
-    } catch (error) {
-        console.error('Execution failed:', error);
-        setOutput(`❌ Failed to execute code: ${error.response?.data?.message || error.message}`);
-    } finally {
-        setIsExecuting(false);
-    }
     };
 
     const copyRoomId = () => {
@@ -188,7 +189,6 @@ const Room = () => {
                 participantEmail: user.email,
                 participantName: user.email
             });
-            // Small delay to ensure message is sent before disconnecting
             setTimeout(() => {
                 webSocketService.disconnect();
                 navigate('/dashboard');
@@ -196,6 +196,10 @@ const Room = () => {
         } else {
             navigate('/dashboard');
         }
+    };
+
+    const toggleMobileParticipants = () => {
+        setShowMobileParticipants(!showMobileParticipants);
     };
 
     if (loading) {
@@ -375,8 +379,8 @@ const Room = () => {
                     </div>
                 )}
 
-                {/* Participants Sidebar */}
-                <div className="w-72 bg-gray-800 border-l border-gray-700 p-4 overflow-y-auto">
+                {/* Desktop Participants Sidebar - hidden on mobile */}
+                <div className="hidden md:block w-64 lg:w-72 bg-gray-800 border-l border-gray-700 p-4 overflow-y-auto">
                     <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -435,6 +439,81 @@ const Room = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Mobile Participants Sidebar Toggle Button */}
+                <button
+                    onClick={toggleMobileParticipants}
+                    className="md:hidden fixed bottom-20 right-4 bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full shadow-lg z-20 transition"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </button>
+
+                {/* Mobile Participants Sidebar (Slide-out) */}
+                {showMobileParticipants && (
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 md:hidden" onClick={toggleMobileParticipants}>
+                        <div className="absolute right-0 top-0 h-full w-80 bg-gray-800 shadow-xl p-4 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-white font-semibold text-lg">Participants ({participants.length})</h3>
+                                <button onClick={toggleMobileParticipants} className="text-gray-400 hover:text-white">
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="space-y-2">
+                                {participants.map((participant) => {
+                                    const isCurrentUser = participant === user?.email;
+                                    return (
+                                        <div
+                                            key={participant}
+                                            className={`flex items-center gap-3 p-3 rounded-xl transition ${
+                                                isCurrentUser ? 'bg-blue-500/20 border border-blue-500/30' : 'bg-gray-700/50'
+                                            }`}
+                                        >
+                                            <div className="relative">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
+                                                    {participant[0].toUpperCase()}
+                                                </div>
+                                                <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-800 ${connected ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="text-gray-200 text-sm font-medium">
+                                                    {participant.split('@')[0]}
+                                                    {isCurrentUser && <span className="text-blue-400 text-xs ml-1">(you)</span>}
+                                                </p>
+                                                <p className="text-gray-500 text-xs break-all">{participant}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {participants.length === 0 && (
+                                    <div className="text-center py-8">
+                                        <div className="text-gray-500 text-sm">No other participants</div>
+                                        <p className="text-gray-600 text-xs mt-1">Share the room ID to invite others</p>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            {/* Invite Section for Mobile */}
+                            <div className="mt-6 pt-4 border-t border-gray-700">
+                                <p className="text-gray-400 text-xs mb-2">Share this room ID:</p>
+                                <div className="flex gap-2">
+                                    <code className="flex-1 bg-gray-900 p-2 rounded text-blue-400 text-sm font-mono text-center">
+                                        {roomId}
+                                    </code>
+                                    <button
+                                        onClick={copyRoomId}
+                                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded transition text-sm"
+                                    >
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

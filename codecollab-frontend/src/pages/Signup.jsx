@@ -38,10 +38,10 @@ const Signup = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-xl w-96 border border-gray-700">
-                <h1 className="text-3xl font-bold text-center text-blue-400 mb-8">CodeCollab</h1>
-                <h2 className="text-xl text-white mb-6">Create an account</h2>
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
+            <div className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl w-full max-w-md border border-gray-700">
+                <h1 className="text-2xl md:text-3xl font-bold text-center text-blue-400 mb-6 md:mb-8">CodeCollab</h1>
+                <h2 className="text-lg md:text-xl text-white mb-6">Create an account</h2>
                 
                 {error && (
                     <div className="bg-red-500 text-white p-3 rounded mb-4 text-sm">
@@ -51,45 +51,45 @@ const Signup = () => {
                 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-300 mb-2">Username</label>
+                        <label className="block text-gray-300 mb-2 text-sm md:text-base">Username</label>
                         <input
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                             required
                         />
                     </div>
                     
                     <div className="mb-4">
-                        <label className="block text-gray-300 mb-2">Email</label>
+                        <label className="block text-gray-300 mb-2 text-sm md:text-base">Email</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                             required
                         />
                     </div>
                     
                     <div className="mb-4">
-                        <label className="block text-gray-300 mb-2">Password</label>
+                        <label className="block text-gray-300 mb-2 text-sm md:text-base">Password</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                             required
                         />
                     </div>
                     
                     <div className="mb-6">
-                        <label className="block text-gray-300 mb-2">Confirm Password</label>
+                        <label className="block text-gray-300 mb-2 text-sm md:text-base">Confirm Password</label>
                         <input
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+                            className="w-full p-3 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500 text-sm md:text-base"
                             required
                         />
                     </div>
@@ -97,13 +97,13 @@ const Signup = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded font-semibold transition disabled:opacity-50"
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded font-semibold transition disabled:opacity-50 text-base"
                     >
                         {loading ? 'Creating account...' : 'Sign Up'}
                     </button>
                 </form>
                 
-                <p className="text-gray-400 text-center mt-4">
+                <p className="text-gray-400 text-center mt-4 text-sm md:text-base">
                     Already have an account?{' '}
                     <Link to="/login" className="text-blue-400 hover:underline">
                         Login
