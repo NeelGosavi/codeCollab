@@ -1,51 +1,63 @@
 import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
+// Use environment variable for WebSocket URL
+const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws';
+
+console.log('🔌 WebSocket URL:', WS_URL);
 
 class WebSocketService {
     constructor() {
         this.client = null;
         this.connected = false;
         this.subscriptions = new Map();
+        this.currentRoomId = null;
+        this.currentUserEmail = null;
     }
 
-    connect(roomId, userEmail, onConnected, onDisconnected) {
+    connect(roomId, userEmail, onMessage, onDisconnect) {
+        this.currentRoomId = roomId;
+        this.currentUserEmail = userEmail;
+        
+        console.log('🔌 Connecting to WebSocket at:', WS_URL);
+        
         // Fix for the 'global is not defined' error
-        window.global = window;
+        if (typeof window !== 'undefined' && !window.global) {
+            window.global = window;
+        }
+        
+        // Create SockJS connection
+        const socket = new SockJS(WS_URL);
         
         this.client = new Client({
-            brokerURL: 'ws://localhost:8080/ws/websocket',
+            webSocketFactory: () => socket,
             connectHeaders: {},
             debug: (str) => console.log('STOMP:', str),
             reconnectDelay: 5000,
             heartbeatIncoming: 4000,
             heartbeatOutgoing: 4000,
             onConnect: () => {
-                console.log('✅ WebSocket connected');
+                console.log('✅ WebSocket connected successfully!');
                 this.connected = true;
                 
                 // Subscribe to code updates
                 const codeSub = this.client.subscribe(`/topic/room/${roomId}/code`, (message) => {
-                    if (onConnected) {
-                        const data = JSON.parse(message.body);
-                        onConnected('code', data);
-                    }
+                    const data = JSON.parse(message.body);
+                    if (onMessage) onMessage('code', data);
                 });
                 this.subscriptions.set('code', codeSub);
                 
                 // Subscribe to typing indicators
                 const typingSub = this.client.subscribe(`/topic/room/${roomId}/typing`, (message) => {
-                    if (onConnected) {
-                        const data = JSON.parse(message.body);
-                        onConnected('typing', data);
-                    }
+                    const data = JSON.parse(message.body);
+                    if (onMessage) onMessage('typing', data);
                 });
                 this.subscriptions.set('typing', typingSub);
                 
                 // Subscribe to participant updates
                 const participantSub = this.client.subscribe(`/topic/room/${roomId}/participants`, (message) => {
-                    if (onConnected) {
-                        const data = JSON.parse(message.body);
-                        onConnected('participants', data);
-                    }
+                    const data = JSON.parse(message.body);
+                    if (onMessage) onMessage('participants', data);
                 });
                 this.subscriptions.set('participants', participantSub);
                 
@@ -56,15 +68,17 @@ class WebSocketService {
                     participantEmail: userEmail,
                     participantName: userEmail
                 });
+                
+                if (onMessage) onMessage('connected', { connected: true });
             },
             onStompError: (frame) => {
                 console.error('STOMP error:', frame);
-                if (onDisconnected) onDisconnected();
+                if (onDisconnect) onDisconnect();
             },
             onDisconnect: () => {
                 console.log('WebSocket disconnected');
                 this.connected = false;
-                if (onDisconnected) onDisconnected();
+                if (onDisconnect) onDisconnect();
             },
             onWebSocketError: (event) => {
                 console.error('WebSocket error:', event);
@@ -72,12 +86,19 @@ class WebSocketService {
         });
         
         this.client.activate();
-        
         return this.client;
     }
 
     disconnect() {
         if (this.client && this.client.connected) {
+            if (this.currentRoomId && this.currentUserEmail) {
+                this.send('/app/room.leave', {
+                    roomId: this.currentRoomId,
+                    eventType: 'LEAVE',
+                    participantEmail: this.currentUserEmail,
+                    participantName: this.currentUserEmail
+                });
+            }
             this.client.deactivate();
         }
         this.connected = false;
