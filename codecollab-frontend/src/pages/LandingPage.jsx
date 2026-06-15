@@ -41,82 +41,76 @@ const LandingPage = () => {
             icon: "💻",
             title: "Real-time Code Editor",
             description: "Powerful Monaco editor with syntax highlighting, auto-completion, and real-time sync across all participants.",
-            color: "blue",
             gradient: "from-blue-500 to-cyan-500"
         },
         {
             icon: "👥",
             title: "Live Participants",
             description: "See who's online, track cursors, and know when someone is typing with real-time indicators.",
-            color: "purple",
             gradient: "from-purple-500 to-pink-500"
         },
         {
             icon: "⚡",
             title: "Execute Code",
             description: "Run Java, Python, and JavaScript code directly in the browser. See output instantly.",
-            color: "green",
             gradient: "from-green-500 to-emerald-500"
         },
         {
             icon: "📚",
             title: "Session History",
             description: "All your rooms are saved. Come back anytime to continue your work.",
-            color: "yellow",
             gradient: "from-yellow-500 to-orange-500"
         },
         {
             icon: "🔒",
             title: "Secure Rooms",
             description: "Private rooms with unique IDs. Only people with the room ID can join.",
-            color: "red",
             gradient: "from-red-500 to-rose-500"
         },
         {
             icon: "🌐",
             title: "Multi-Language",
             description: "Support for Java, Python, and JavaScript. More languages coming soon.",
-            color: "indigo",
             gradient: "from-indigo-500 to-purple-500"
         }
     ];
 
-    const techStack = [
+    const useCases = [
         {
-            name: "Spring Boot",
-            icon: "☕",
-            description: "REST APIs & WebSocket",
-            color: "from-green-500 to-emerald-500"
+            icon: "👥",
+            title: "Pair Programming",
+            description: "Collaborate with teammates in real-time, review code together, and solve problems faster.",
+            gradient: "from-blue-500 to-cyan-500"
         },
         {
-            name: "React",
-            icon: "⚛️",
-            description: "Modern UI Components",
-            color: "from-cyan-500 to-blue-500"
+            icon: "🎓",
+            title: "Teaching & Learning",
+            description: "Ideal for instructors to teach coding and for students to learn collaboratively.",
+            gradient: "from-purple-500 to-pink-500"
         },
         {
-            name: "MongoDB",
-            icon: "🍃",
-            description: "Database & Storage",
-            color: "from-green-600 to-teal-500"
+            icon: "🏢",
+            title: "Team Collaboration",
+            description: "Remote teams can code together, conduct interviews, and collaborate seamlessly.",
+            gradient: "from-green-500 to-emerald-500"
         },
         {
-            name: "WebSocket",
-            icon: "🔌",
-            description: "Real-time Communication",
-            color: "from-purple-500 to-pink-500"
+            icon: "🎯",
+            title: "Coding Interviews",
+            description: "Conduct live coding interviews with candidates in real-time.",
+            gradient: "from-orange-500 to-red-500"
         },
         {
-            name: "Tailwind CSS",
-            icon: "🎨",
-            description: "Styling & Animations",
-            color: "from-blue-400 to-cyan-400"
+            icon: "📝",
+            title: "Code Reviews",
+            description: "Review code with your team, leave comments, and improve code quality together.",
+            gradient: "from-cyan-500 to-blue-500"
         },
         {
-            name: "JWT",
-            icon: "🔐",
-            description: "Secure Authentication",
-            color: "from-red-500 to-orange-500"
+            icon: "🚀",
+            title: "Open Source",
+            description: "Collaborate with contributors from around the world on open source projects.",
+            gradient: "from-indigo-500 to-purple-500"
         }
     ];
 
@@ -201,30 +195,32 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            {/* Built With Section - Tech Stack */}
+            {/* Use Cases Section */}
             <section className="py-12 md:py-20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fadeInUp">
-                            Built With Modern Tech
+                            Perfect For
                         </h2>
                         <p className="text-gray-400 max-w-2xl mx-auto animate-fadeInUp animation-delay-200">
-                            Powered by industry-leading technologies for the best experience
+                            Whether you're a developer, teacher, or team lead
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-                        {techStack.map((tech, index) => (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        {useCases.map((useCase, index) => (
                             <div
                                 key={index}
-                                className="bg-gray-800/30 rounded-xl p-4 md:p-6 text-center border border-gray-700 hover:border-transparent transition-all duration-300 group animate-fadeInUp"
+                                className="bg-gray-800/30 rounded-xl p-6 border border-gray-700 hover:border-transparent transition-all duration-500 group animate-fadeInUp"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
-                                <div className={`w-12 h-12 md:w-14 md:h-14 bg-gradient-to-r ${tech.color} rounded-lg flex items-center justify-center mx-auto mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6`}>
-                                    <span className="text-2xl md:text-3xl">{tech.icon}</span>
+                                <div className={`w-14 h-14 bg-gradient-to-r ${useCase.gradient} rounded-lg flex items-center justify-center mb-4 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                                    <span className="text-2xl">{useCase.icon}</span>
                                 </div>
-                                <h3 className="text-sm md:text-base font-semibold text-white mb-1">{tech.name}</h3>
-                                <p className="text-gray-500 text-xs">{tech.description}</p>
+                                <h3 className="text-xl font-semibold text-white mb-2">{useCase.title}</h3>
+                                <p className="text-gray-400 transition-all group-hover:text-gray-300">
+                                    {useCase.description}
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -269,8 +265,57 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            {/* How It Works Section */}
+            {/* Comparison Section */}
             <section className="py-12 md:py-20">
+                <div className="container mx-auto px-4 md:px-6">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fadeInUp">
+                            Why Choose CodeCollab?
+                        </h2>
+                        <p className="text-gray-400 max-w-2xl mx-auto animate-fadeInUp animation-delay-200">
+                            See what makes us different
+                        </p>
+                    </div>
+
+                    <div className="max-w-4xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-gray-800/50 rounded-xl p-6 text-center hover:bg-gray-800/70 transition-all hover:scale-105">
+                                <div className="text-green-500 text-3xl mb-3">✓</div>
+                                <h3 className="text-white font-semibold text-lg">Real-time Sync</h3>
+                                <p className="text-gray-500 text-sm mt-1">Instant code updates across all participants</p>
+                            </div>
+                            <div className="bg-gray-800/50 rounded-xl p-6 text-center hover:bg-gray-800/70 transition-all hover:scale-105">
+                                <div className="text-green-500 text-3xl mb-3">✓</div>
+                                <h3 className="text-white font-semibold text-lg">Multi-Language</h3>
+                                <p className="text-gray-500 text-sm mt-1">Java, Python, JavaScript support</p>
+                            </div>
+                            <div className="bg-gray-800/50 rounded-xl p-6 text-center hover:bg-gray-800/70 transition-all hover:scale-105">
+                                <div className="text-green-500 text-3xl mb-3">✓</div>
+                                <h3 className="text-white font-semibold text-lg">No Setup Required</h3>
+                                <p className="text-gray-500 text-sm mt-1">Works directly in your browser</p>
+                            </div>
+                            <div className="bg-gray-800/50 rounded-xl p-6 text-center hover:bg-gray-800/70 transition-all hover:scale-105">
+                                <div className="text-green-500 text-3xl mb-3">✓</div>
+                                <h3 className="text-white font-semibold text-lg">Completely Free</h3>
+                                <p className="text-gray-500 text-sm mt-1">No credit card required</p>
+                            </div>
+                            <div className="bg-gray-800/50 rounded-xl p-6 text-center hover:bg-gray-800/70 transition-all hover:scale-105">
+                                <div className="text-green-500 text-3xl mb-3">✓</div>
+                                <h3 className="text-white font-semibold text-lg">Real-time Typing</h3>
+                                <p className="text-gray-500 text-sm mt-1">See who's typing in real-time</p>
+                            </div>
+                            <div className="bg-gray-800/50 rounded-xl p-6 text-center hover:bg-gray-800/70 transition-all hover:scale-105">
+                                <div className="text-green-500 text-3xl mb-3">✓</div>
+                                <h3 className="text-white font-semibold text-lg">Participant Tracking</h3>
+                                <p className="text-gray-500 text-sm mt-1">See who's in the room with you</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* How It Works Section */}
+            <section className="py-12 md:py-20 bg-gray-800/20">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 animate-fadeInUp">
