@@ -33,8 +33,11 @@ public class RoomService {
         } while (roomRepository.existsByRoomId(roomId));
         
         Room room = new Room(roomId, roomName, ownerEmail);
+        
+        // Set language and default code
         if (language != null && !language.isEmpty()) {
             room.setLanguage(language);
+            room.setCodeContent(Room.getDefaultCodeForLanguage(language));
         }
         
         // Initialize participants list

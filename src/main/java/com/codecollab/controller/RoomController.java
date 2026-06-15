@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/rooms")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"})
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173", "https://code-collab-five-teal.vercel.app"})
 public class RoomController {
     
     @Autowired
@@ -56,7 +56,11 @@ public class RoomController {
     public RoomResponse updateLanguage(@PathVariable String roomId,
                                         @RequestBody String language,
                                         @RequestHeader("X-User-Email") String email) {
+        // Update the language
         Room room = roomService.updateLanguage(roomId, language);
+        // Update code content to default boilerplate for the new language
+        String defaultCode = Room.getDefaultCodeForLanguage(language);
+        room = roomService.updateCode(roomId, defaultCode);
         return new RoomResponse(room, email);
     }
     
